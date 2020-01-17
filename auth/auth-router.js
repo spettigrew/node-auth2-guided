@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs")
 const express = require("express")
+const restrictedMiddleware = require("")
 const usersModel = require("../users/users-model")
 
 const router = express.Router()
@@ -28,7 +29,6 @@ router.post("/login", async (req, res, next) => {
       req.session.user = user
 
       res.status(200).json({
-        token: token, 
         message: `Welcome ${user.username}!`,
       })
     } else {
@@ -41,18 +41,28 @@ router.post("/login", async (req, res, next) => {
   }
 })
 
-router.get("/protected", async (req, res, next) => {
+router.get("/protected", restricted(), async (req, res, next) => {
   try {
-    if (!req.session || !req.session.user) {
-      return res.status(403).json({ message: "Not authorized.", })
-    }
+    // if (!req.session || !req.session.user) {
+    //   return res.status(403).json({ message: "Not authorized.", })
+    // }
     
-    res.json({
+    return res.status(200).json({
       message: "You are authorized",
     })
   } catch (err) {
     next(err)
   }
+})
+
+router.get("/logout", restricted(), (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) {
+      next(err)      
+    } else {
+      return res.status(200).json({ message: "Successfully logged out." })
+    }
+  })
 })
 
 module.exports = router
