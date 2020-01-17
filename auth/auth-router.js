@@ -22,7 +22,7 @@ router.post("/login", async (req, res, next) => {
     const user = await usersModel.findBy({ username }).first()
     // since bcrypt hashes generate different results due to the salting,
     // we rely on the magic internals to compare hashes (rather than doing
-    // it manulally by re-hashing and comparing)
+    // it manually by re-hashing and comparing)
     const passwordValid = await bcrypt.compare(password, user.password)
 
     if (user && passwordValid) {
@@ -47,6 +47,10 @@ router.post("/login", async (req, res, next) => {
 
 router.get("/protected", async (req, res, next) => {
   try {
+    const { token } = req.headers
+    if (!token || !tokens[token]) {
+      return res.status(403).json({ message: "Not authorized.", })
+    }
     res.json({
       message: "You are authorized",
     })
