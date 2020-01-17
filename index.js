@@ -16,6 +16,12 @@ server.use(session({
   resave: false, //keep it false, won't re-create sessions that haven't changed
   saveUninitialized: false, //keep from setting cookies automatically
   secret: "unicorns are not real, sorry.", // to crypto the cookie
+  cookie: {
+    httpOnly: true, //cannot access the cookie through JS.
+    maxAge: 1000 * 60 * 60 * 24 * 7, // expires session after 7 days.
+    // 1000 - milliseconds, 60 secs, 60 mins, 24 hours, 7 days.
+    secure: false, //in production, this should be true so the cookie heder is encrypted.
+  }
 }))
 // environment variable = .env. Put secret keys in there.
 
@@ -24,6 +30,7 @@ server.use("/auth", authRouter)
 server.use("/users", usersRouter)
 
 server.get("/", (req, res, next) => {
+  console.log(req.headers)
   res.json({
     message: "Welcome to our API",
   })
