@@ -4,6 +4,8 @@ const usersModel = require("../users/users-model")
 
 const router = express.Router()
 
+const tokens = {}//keep track of people logged in.
+
 router.post("/register", async (req, res, next) => {
   try {
     const saved = await usersModel.add(req.body)
@@ -24,7 +26,13 @@ router.post("/login", async (req, res, next) => {
     const passwordValid = await bcrypt.compare(password, user.password)
 
     if (user && passwordValid) {
+      const token = Math.random()
+
+      token[token] = user
+      console.log(tokens)
+
       res.status(200).json({
+        token: token, 
         message: `Welcome ${user.username}!`,
       })
     } else {
