@@ -4,8 +4,6 @@ const usersModel = require("../users/users-model")
 
 const router = express.Router()
 
-const tokens = {}//keep track of people logged in.
-
 router.post("/register", async (req, res, next) => {
   try {
     const saved = await usersModel.add(req.body)
@@ -26,10 +24,8 @@ router.post("/login", async (req, res, next) => {
     const passwordValid = await bcrypt.compare(password, user.password)
 
     if (user && passwordValid) {
-      const token = Math.random()
-
-      token[token] = user
-      console.log(tokens)
+      // stores the user data in the current session, so it persists between requests.
+      req.session.user = user
 
       res.status(200).json({
         token: token, 
@@ -47,10 +43,10 @@ router.post("/login", async (req, res, next) => {
 
 router.get("/protected", async (req, res, next) => {
   try {
-    const { token } = req.headers
-    if (!token || !tokens[token]) {
+    if (!req.session || !req.session.user) {
       return res.status(403).json({ message: "Not authorized.", })
     }
+    
     res.json({
       message: "You are authorized",
     })
