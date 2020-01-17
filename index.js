@@ -2,7 +2,7 @@ const express = require("express")
 const helmet = require("helmet")
 const cors = require("cors")
 const session = require("express-session")
-const KnexSessionStore = require("connect-session-knex")(session) //variable
+const KnexSessionStore = require("connect-session-knex")(session) //variable being passed in.
 
 const dbConfig = require("./database/dbConfig")
 const authRouter = require("./auth/auth-router")
