@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs")
 const express = require("express")
-const restrictedMiddleware = require("")
+const restricted = require("../middleware/restricted")
 const usersModel = require("../users/users-model")
 
 const router = express.Router()
