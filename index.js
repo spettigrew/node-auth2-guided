@@ -2,7 +2,9 @@ const express = require("express")
 const helmet = require("helmet")
 const cors = require("cors")
 const session = require("express-session")
+const KnexSessionStore = require("connect-session-knex")(session) //variable
 
+const dbConfig = require("./database/dbConfig")
 const authRouter = require("./auth/auth-router")
 const usersRouter = require("./users/users-router")
 
@@ -21,7 +23,11 @@ server.use(session({
     maxAge: 1000 * 60 * 60 * 24 * 7, // expires session after 7 days.
     // 1000 - milliseconds, 60 secs, 60 mins, 24 hours, 7 days.
     secure: false, //in production, this should be true so the cookie heder is encrypted.
-  }
+  },
+  store: new KnexSessionStore({
+    knex: dbConfig,
+    createtable: true, //if the table does not exist in the db, it create this automatically. 
+  }), //backend for our session storage
 }))
 // environment variable = .env. Put secret keys in there.
 
